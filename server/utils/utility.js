@@ -1,7 +1,7 @@
-class GlobalError extends Error {
+class GlobalErrorHandler extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
   }
 }
-export { GlobalError };
+export { GlobalErrorHandler };
