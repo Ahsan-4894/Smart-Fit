@@ -17,7 +17,7 @@ import USER_ROUTE from "./routes/user.route.js";
 import AUTH_ROUTE from "./routes/auth.route.js";
 import ADMIN_ROUTE from "./routes/admin.route.js";
 import PLAN_ROUTE from "./routes/plan.route.js";
-
+import CHAT_ROUTE from "./routes/chat.route.js";
 // All ENV Variables
 const SERVER_URL = process.env.SERVER_URL;
 const PORT = process.env.PORT;
@@ -55,6 +55,7 @@ app.use("/api/v1/users", USER_ROUTE);
 app.use("/api/v1/auth", AUTH_ROUTE);
 app.use("/api/v1/admin", ADMIN_ROUTE);
 app.use("/api/v1/plan", PLAN_ROUTE);
+app.use("/api/v1/chat", CHAT_ROUTE);
 
 app.get("/", (req, res) => {
   res.send("Hello from JavaScript!");
