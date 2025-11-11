@@ -7,7 +7,6 @@ export const validateIncomingRequest = (dto) => {
       const result = dto.safeParse(req.body);
       if (!result.success) {
         const errsObj = result.error.flatten().fieldErrors;
-
         return res.status(StatusCodes.BAD_REQUEST).json({
           ok: false,
           message: "Validation Failed",
