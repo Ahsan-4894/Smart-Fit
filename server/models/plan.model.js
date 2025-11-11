@@ -6,6 +6,7 @@ const planSchema = new Schema(
     title: { type: String, required: true },
     description: { type: String, required: true },
     image: { type: String, required: true },
+    public_id: { type: String, required: true },
     price: { type: Number, required: true },
     duration: { type: String, required: true },
     features: { type: [String], required: true },

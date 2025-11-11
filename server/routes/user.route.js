@@ -3,6 +3,7 @@ const router = express.Router();
 import UserController from "../controllers/user.controller.js";
 import { validateIncomingRequest } from "../middlewares/requestValidation.middleware.js";
 import { userLoginDto, userSignupDto } from "../dto/user.dtos.js";
+import { isLoggedInAsUser } from "../middlewares/auth.middleware.js";
 
 // Public Routes
 router.post(
@@ -15,6 +16,9 @@ router.post(
   validateIncomingRequest(userSignupDto),
   UserController.register
 );
+
+// Protected Routes
+router.use(isLoggedInAsUser);
 router.post("/logout", UserController.logout);
 
 export default router;

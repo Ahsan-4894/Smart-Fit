@@ -19,7 +19,7 @@ class UserService {
       const isPasswordMatched = await user.comparePassword(password);
       if (!isPasswordMatched)
         return new GlobalErrorHandler(
-          "Wrong creentials",
+          "Wrong credentials",
           StatusCodes.NOT_FOUND
         );
       // Check if user's role is ROLE_USER.
@@ -48,6 +48,7 @@ class UserService {
       );
     }
   };
+
   static registerUser = async (userDetails, res) => {
     try {
       // Check if user already exists.
@@ -93,6 +94,7 @@ class UserService {
       );
     }
   };
+
   static logoutUser = async (res) => {
     res.clearCookie("loggedUser");
     return;

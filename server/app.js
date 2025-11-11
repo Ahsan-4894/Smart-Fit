@@ -1,11 +1,12 @@
 import express from "express";
-import dotenv from "dotenv";
+const app = express();
 
-// Set this according to yourself
-import { errorMiddleware } from "./middlewares/error.middleware.js";
+import dotenv from "dotenv";
 dotenv.config({
   path: "../.env",
 });
+
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 import cors from "cors";
 import { connectDB } from "./configuration/dbConnect.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -14,8 +15,8 @@ import cookieParser from "cookie-parser";
 // All Routes.
 import USER_ROUTE from "./routes/user.route.js";
 import AUTH_ROUTE from "./routes/auth.route.js";
-
-const app = express();
+import ADMIN_ROUTE from "./routes/admin.route.js";
+import PLAN_ROUTE from "./routes/plan.route.js";
 
 // All ENV Variables
 const SERVER_URL = process.env.SERVER_URL;
@@ -32,6 +33,8 @@ connectDB(DATABASE_URI, DB_NAME);
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: CLIENT_URL,
@@ -50,6 +53,8 @@ cloudinary.config({
 // All Routes.
 app.use("/api/v1/users", USER_ROUTE);
 app.use("/api/v1/auth", AUTH_ROUTE);
+app.use("/api/v1/admin", ADMIN_ROUTE);
+app.use("/api/v1/plan", PLAN_ROUTE);
 
 app.get("/", (req, res) => {
   res.send("Hello from JavaScript!");
