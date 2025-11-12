@@ -1,76 +1,48 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { userExists } from "../../redux/reducers/auth";
+import { register } from "../../api/user";
+import { useNavigate } from "react-router-dom";
 
-const Signin = () => {
+const Signup = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [gender, setGender] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [imageError, setImageError] = useState("");
+  const [age, setAge] = useState(0);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImageError("");
-
-    if (file) {
-      // Check file type
-      const validTypes = ["image/png", "image/jpeg"];
-      if (!validTypes.includes(file.type)) {
-        setImageError("Only PNG and JPEG files are allowed");
-        setProfileImage(null);
-        setImagePreview(null);
-        e.target.value = "";
-        return;
-      }
-
-      // Check file size (optional - limit to 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setImageError("File size must be less than 5MB");
-        setProfileImage(null);
-        setImagePreview(null);
-        e.target.value = "";
-        return;
-      }
-
-      setProfileImage(file);
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSignin = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-
-    // Create FormData for file upload
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("weight", weight);
-    formData.append("height", height);
-    formData.append("gender", gender);
-    if (profileImage) {
-      formData.append("profileImage", profileImage);
-    }
-
-    // Add your signup API call here
-    console.log("Form Data:", {
+    console.log("In Signup.jsx, under handleSignup page");
+    const payload = {
       name,
       email,
       password,
-      weight,
-      height,
+      weight: parseFloat(weight),
+      height: parseFloat(height),
       gender,
-      profileImage: profileImage?.name,
-    });
+      age: parseInt(age),
+    };
+    console.log(payload);
+    try {
+      const data = await register(payload);
+      if (data?.ok) {
+        dispatch(userExists(data?.user));
+        toast.success(data?.message);
+        navigate("/dashboard");
+      } else {
+        toast.error(data?.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Oops! Something went wrong");
+    }
   };
 
   return (
@@ -85,7 +57,7 @@ const Signin = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSignin} className="space-y-4">
+        <form onSubmit={handleSignup} className="space-y-4">
           <div>
             <label className="block text-gray-700 mb-1">Name</label>
             <input
@@ -152,6 +124,21 @@ const Signin = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-1">Age (years)</label>
+              <input
+                type="number"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                placeholder="0"
+                min="1"
+                required
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-gray-700 mb-1">Gender</label>
             <select
@@ -164,32 +151,6 @@ const Signin = () => {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-          </div>
-
-          <div>
-            <label className="block text-gray-700 mb-1">Profile Image</label>
-            <input
-              type="file"
-              accept=".png,.jpeg,.jpg"
-              onChange={handleImageChange}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100"
-            />
-            {imageError && (
-              <p className="text-red-500 text-sm mt-1">{imageError}</p>
-            )}
-            <p className="text-gray-500 text-sm mt-1">
-              PNG or JPEG only, max 5MB
-            </p>
-
-            {imagePreview && (
-              <div className="mt-3 flex justify-center">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-24 h-24 rounded-full object-cover border-2 border-orange-600"
-                />
-              </div>
-            )}
           </div>
 
           <button
@@ -211,4 +172,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Signup;

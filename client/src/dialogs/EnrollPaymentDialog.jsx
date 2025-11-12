@@ -32,7 +32,7 @@ const EnrollPaymentDialog = ({ plan, onClose, onSuccess }) => {
   };
 
   // Calculate tax and total (example)
-  const priceValue = parseFloat(plan?.price.replace("$", "")) || 0;
+  const priceValue = plan?.price || 0;
   const taxRate = 0.1; // 10% tax
   const tax = priceValue * taxRate;
   const total = priceValue + tax;
@@ -147,7 +147,7 @@ const EnrollPaymentDialog = ({ plan, onClose, onSuccess }) => {
                       </p>
                     </div>
                     <span className="text-lg font-bold text-gray-900">
-                      {plan?.price}
+                      ${plan?.price}
                     </span>
                   </div>
 

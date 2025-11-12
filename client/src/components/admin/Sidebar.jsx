@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Dumbbell, LogOut } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logout } from "../../api/admin";
+import toast from "react-hot-toast";
+import { userNotExists } from "../../redux/reducers/auth";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -13,9 +20,21 @@ const Sidebar = () => {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("Logged out");
+  const handleLogout = async () => {
+    console.log("Under admin/Sidebar.jsx, under handleLogout page");
+    try {
+      const data = await logout();
+      if (data?.ok) {
+        dispatch(userNotExists());
+        toast.success(data?.message);
+        navigate("/admin/login");
+      } else {
+        toast.error(data?.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Oops! Something went wrong");
+    }
   };
 
   return (

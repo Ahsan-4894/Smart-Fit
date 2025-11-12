@@ -2,8 +2,41 @@ import Sidebar from "../../components/Sidebar";
 import { DonughtChart } from "../../components/Charts";
 import QuickStats from "../../components/QuickStats";
 import EnrolledPrograms from "../../components/EnrolledPrograms";
+import toast from "react-hot-toast";
+import { dashboard } from "../../api/user";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  const [stats, setStats] = useState({
+    enrolledCount: 0,
+    totalHours: 0,
+    nextSession: "",
+    allEnrolledPrograms: [{}],
+    totalProgramsCount: 0,
+    avgDuration: 0,
+    goalProgress: [],
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await dashboard();
+        if (data?.ok) {
+          setStats(data?.dashboard);
+        } else {
+          toast.error(data?.message);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error(
+          err?.response?.data?.message || "Oops! Something went wrong"
+        );
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="min-h-screen flex">
@@ -22,11 +55,11 @@ const Dashboard = () => {
             </div>
 
             {/* Quick Stats */}
-            <QuickStats />
+            <QuickStats details={stats} />
 
             {/* Enrolled Programs */}
             <div className="mb-8">
-              <EnrolledPrograms />
+              <EnrolledPrograms enrolledPrograms={stats.allEnrolledPrograms} />
             </div>
 
             {/* Charts Section */}
@@ -34,7 +67,10 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold text-gray-800 mb-4">
                 Performance Analytics
               </h2>
-              <DonughtChart labels={["Completed", "Left"]} dataArr={[65, 35]}/>
+              <DonughtChart
+                labels={["Completed", "Left"]}
+                dataArr={[stats.goalProgress[0], stats.goalProgress[1]]}
+              />
             </div>
 
             {/* Recent Activity */}

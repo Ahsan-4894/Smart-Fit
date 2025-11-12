@@ -1,13 +1,35 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { userExists } from "../../redux/reducers/auth";
+import { login } from "../../api/admin";
 
 const Login = () => {
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add your Admin login API call here
-    console.log("Email:", email, "Password:", password);
+    console.log("In Admin/Login.jsx, under handleLogin page");
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    console.log(formData);
+    try {
+      const data = await login(formData);
+      console.log(data);
+      if (data?.ok) {
+        dispatch(userExists(data?.user));
+        toast.success(data?.message);
+      } else {
+        toast.error(data?.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Oops! Something went wrong");
+    }
   };
 
   return (

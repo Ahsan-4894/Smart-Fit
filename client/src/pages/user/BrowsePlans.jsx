@@ -1,48 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import PlanDetailsDialog from "../../dialogs/PlanDetailsDialog";
 import EnrollPaymentDialog from "../../dialogs/EnrollPaymentDialog";
-
+import { getAllPlans } from "../../api/plan";
+import toast from "react-hot-toast";
 const BrowsePlans = () => {
-  const plansData = [
-    {
-      id: "starter",
-      title: "Starter Session",
-      price: "$9",
-      image:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80",
-      features: ["1-on-1 Coaching", "15 min session", "Basic plan"],
-      duration: "15 min",
-      difficulty: "Beginner",
-    },
-    {
-      id: "pro",
-      title: "Pro Session",
-      price: "$29",
-      image:
-        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80",
-      features: ["1-on-1 Coaching", "45 min session", "Personalized plan"],
-      duration: "45 min",
-      difficulty: "Intermediate",
-    },
-    {
-      id: "elite",
-      title: "Elite Session",
-      price: "$59",
-      image:
-        "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80",
-      features: ["1-on-1 Coaching", "90 min deep dive", "Nutrition guide"],
-      duration: "90 min",
-      difficulty: "Advanced",
-    },
-  ];
-
+  const [plansData, setPlansData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All Plans");
 
-  // Filter plans based on active filter
+  // Fetch plans from backend
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const data = await getAllPlans();
+        if (data?.ok) {
+          const plans = data?.plans;
+          setPlansData(plans);
+        } else {
+          toast.error(data?.message);
+        }
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+        toast.error(
+          error?.response?.data?.message || "Oops! Something went wrong"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPlans();
+  }, []);
+
+  // Filter plans based on difficulty
   const filteredPlans =
     activeFilter === "All Plans"
       ? plansData
@@ -58,11 +51,18 @@ const BrowsePlans = () => {
     setShowEnrollModal(true);
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-500">Loading plans...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="min-h-screen flex">
         <Sidebar />
-
         <main className="flex-1 p-4 md:p-6 lg:p-10">
           <div className="max-w-7xl mx-auto">
             {/* Header Section */}
@@ -75,48 +75,23 @@ const BrowsePlans = () => {
               </p>
             </div>
 
-            {/* Filter/Sort Section (Optional) */}
+            {/* Filter Buttons */}
             <div className="mb-6 flex flex-wrap gap-3">
-              <button
-                onClick={() => setActiveFilter("All Plans")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeFilter === "All Plans"
-                    ? "bg-orange-600 text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:border-orange-600"
-                }`}
-              >
-                All Plans
-              </button>
-              <button
-                onClick={() => setActiveFilter("Beginner")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeFilter === "Beginner"
-                    ? "bg-orange-600 text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:border-orange-600"
-                }`}
-              >
-                Beginner
-              </button>
-              <button
-                onClick={() => setActiveFilter("Intermediate")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeFilter === "Intermediate"
-                    ? "bg-orange-600 text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:border-orange-600"
-                }`}
-              >
-                Intermediate
-              </button>
-              <button
-                onClick={() => setActiveFilter("Advanced")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeFilter === "Advanced"
-                    ? "bg-orange-600 text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:border-orange-600"
-                }`}
-              >
-                Advanced
-              </button>
+              {["All Plans", "Beginner", "Intermediate", "Advanced"].map(
+                (filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      activeFilter === filter
+                        ? "bg-orange-600 text-white"
+                        : "bg-white border border-gray-200 text-gray-700 hover:border-orange-600"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                )
+              )}
             </div>
 
             {/* Plans Grid */}
@@ -127,16 +102,16 @@ const BrowsePlans = () => {
                     key={plan.id}
                     className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group border border-gray-100"
                   >
-                    {/* Image Section */}
+                    {/* Image */}
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={plan.image}
+                        src={plan.imageUrl}
                         alt={plan.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
                         <span className="text-orange-600 font-bold text-lg">
-                          {plan.price}
+                          ${plan.price}
                         </span>
                       </div>
                       <div className="absolute bottom-3 left-3">
@@ -146,19 +121,14 @@ const BrowsePlans = () => {
                       </div>
                     </div>
 
-                    {/* Content Section */}
+                    {/* Content */}
                     <div className="p-6 flex-1 flex flex-col">
-                      <div className="mb-4">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          {plan.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <span>⏱️ {plan.duration}</span>
-                          <span>•</span>
-                          <span>👤 1-on-1</span>
-                        </div>
-                      </div>
-
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {plan.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-4">
+                        Duration: {plan.duration}
+                      </p>
                       <ul className="text-sm text-gray-600 mb-6 space-y-2 flex-1">
                         {plan.features.map((f, idx) => (
                           <li key={idx} className="flex items-start gap-2">
@@ -168,7 +138,6 @@ const BrowsePlans = () => {
                         ))}
                       </ul>
 
-                      {/* Action Buttons */}
                       <div className="flex gap-3">
                         <button
                           onClick={() => openEnroll(plan)}
@@ -194,48 +163,6 @@ const BrowsePlans = () => {
                 </div>
               )}
             </div>
-
-            {/* Additional Info Section */}
-            <div className="mt-12 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Why Choose SmartFit?
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex items-start gap-3">
-                  <div className="text-3xl">🎯</div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      Personalized Plans
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Tailored to your fitness level and goals
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="text-3xl">💪</div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      Expert Coaches
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Certified professionals with years of experience
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="text-3xl">📊</div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      Track Progress
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Monitor your journey with detailed analytics
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </main>
 
@@ -249,7 +176,6 @@ const BrowsePlans = () => {
             }}
           />
         )}
-
         {showEnrollModal && selectedPlan && (
           <EnrollPaymentDialog
             plan={selectedPlan}

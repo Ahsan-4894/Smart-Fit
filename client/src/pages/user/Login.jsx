@@ -1,13 +1,36 @@
 import { useState } from "react";
+import { login } from "../../api/user";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { userExists } from "../../redux/reducers/auth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add your login API call here
-    console.log("Email:", email, "Password:", password);
+    console.log("In Login.jsx, under handleLogin page");
+    const payload = {
+      email,
+      password,
+    };
+    try {
+      const data = await login(payload);
+      console.log(data);
+      if (data?.ok) {
+        dispatch(userExists(data?.user));
+        toast.success(data?.message);
+        navigate("/dashboard");
+      } else {
+        toast.error(data?.message);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Oops! Something went wrong");
+    }
   };
 
   return (

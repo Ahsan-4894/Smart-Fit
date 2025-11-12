@@ -1,5 +1,7 @@
-const QuickStats = () => {
-  const stats = [
+import { useEffect, useState } from "react";
+
+const QuickStats = ({ details = {} }) => {
+  const [stats, setStats] = useState([
     {
       label: "Current Streak",
       value: "7 days",
@@ -9,14 +11,14 @@ const QuickStats = () => {
     },
     {
       label: "Total Programs",
-      value: "3",
+      value: details.enrolledCount,
       icon: "📊",
       change: "1 new this month",
       changeType: "neutral",
     },
     {
-      label: "Hours Trained",
-      value: "24.5h",
+      label: "Total Hours",
+      value: details.totalHours,
       icon: "⏱️",
       change: "+5.2h from last month",
       changeType: "positive",
@@ -28,7 +30,7 @@ const QuickStats = () => {
       change: "Pro Session at 10:00 AM",
       changeType: "neutral",
     },
-  ];
+  ]);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

@@ -1,16 +1,39 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../../components/admin/Sidebar";
 import { Users, DollarSign, Activity, TrendingUp } from "lucide-react";
 import { WeeklySalesChart } from "../../components/admin/Charts";
 import { PopularSessionsChart } from "../../components/admin/Charts";
+import toast from "react-hot-toast";
+import { dashboard } from "../../api/admin";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalUsers: 1248,
-    activeUsers: 342,
-    activeSessions: 28,
-    todaySales: 4567,
+    distinctUsers: 342,
+    totalRevenue: 4567,
+    weeklySales: {},
+    usersPerSessionType: {},
   });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await dashboard();
+        if (data?.ok) {
+          setStats(data?.dashboard);
+        } else {
+          toast.error(data?.message);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error(
+          err?.response?.data?.message || "Oops! Something went wrong"
+        );
+      }
+    };
+
+    fetchStats;
+  }, []);
 
   const StatCard = ({ icon: Icon, title, value, subtitle, trend }) => (
     <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -58,20 +81,20 @@ const Dashboard = () => {
             icon={Users}
             title="Total Users"
             value={stats.totalUsers.toLocaleString()}
-            subtitle={`${stats.activeUsers} active now`}
+            subtitle={`${stats.distinctUsers} active now`}
             trend={12}
           />
           <StatCard
             icon={Activity}
             title="Active Sessions"
-            value={stats.activeSessions}
+            value={stats.totalUsers}
             subtitle="Users in live sessions"
             trend={8}
           />
           <StatCard
             icon={DollarSign}
-            title="Today's Sales"
-            value={`$${stats.todaySales.toLocaleString()}`}
+            title="Total Revenue"
+            value={`$${stats.totalRevenue.toLocaleString()}`}
             trend={15}
           />
         </div>
@@ -85,8 +108,8 @@ const Dashboard = () => {
             </h3>
             <div style={{ height: "300px" }}>
               <WeeklySalesChart
-                labels={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
-                dataArr={[65, 59, 80, 81, 56, 55, 40]}
+                labels={weeklySales?.days}
+                dataArr={weeklySales?.sales}
               />
             </div>
           </div>
@@ -98,8 +121,8 @@ const Dashboard = () => {
             </h3>
             <div style={{ height: "300px" }}>
               <PopularSessionsChart
-                labels={["Yoga", "Cardio", "Strength", "HIIT", "Wellness"]}
-                dataArr={[120, 90, 75, 60, 45]}
+                labels={usersPerSessionType.sessionTypes}
+                dataArr={usersPerSessionType.usersPerSessionType}
               />
             </div>
           </div>

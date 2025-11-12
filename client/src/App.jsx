@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense } from "react";
-
+import { Suspense, useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 // User related imports
 import Home from "./pages/user/Home";
 import Login from "./pages/user/Login";
@@ -8,7 +8,10 @@ import Signup from "./pages/user/Signup";
 import LayoutLoader from "./components/LayoutLoader";
 import Dashboard from "./pages/user/Dashboard";
 import ProtectedRoutesForUser from "./components/auth/ProtectedRoutesForUser";
+import PublicRoutesForUser from "./components/auth/PublicRoutesForUser";
+
 import ProtectedRoutesForAdmin from "./components/auth/ProtectedRoutesForAdmin";
+
 import Chat from "./pages/user/Chat";
 import BrowsePlans from "./pages/user/BrowsePlans";
 
@@ -17,31 +20,60 @@ import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminManagePlans from "./pages/admin/ManagePlans";
 
+import { useDispatch, useSelector } from "react-redux";
+import { userExists, userNotExists } from "./redux/reducers/auth";
+import { currentGetLoggedInUser } from "./api/auth";
+
 const App = () => {
-  const user = {
-    role: "admin",
-  }; // replace this with react redux.
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      try {
+        const data = await currentGetLoggedInUser();
+        if (data?.ok) {
+          dispatch(userExists(data?.user));
+        } else {
+          dispatch(userNotExists());
+        }
+      } catch (err) {
+        dispatch(userNotExists());
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLoggedInUser();
+  }, []);
+
+  if (loading) {
+    return <LayoutLoader />;
+  }
+
   return (
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
-        {/* User Protected Routes*/}
         <Routes>
-          <Route element={<ProtectedRoutesForUser user={user} />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/plans" element={<BrowsePlans />} />
-          </Route>
-
-          {/* User Protected Routes*/}
-
-          {/* User Public Routes */}
-          <Route element={<ProtectedRoutesForUser user={user} redirect="/" />}>
+          {/* <Route element={<PublicRoutesForUser user={user} />}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-          </Route>
+          </Route> */}
 
-          {/* User Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* <Route
+            element={
+              <ProtectedRoutesForUser user={user} redirect="/dashboard" />
+            }
+          > */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/plans" element={<BrowsePlans />} />
+          {/* </Route> */}
 
           {/* Admin Protected Routes */}
           <Route element={<ProtectedRoutesForAdmin user={user} />}>
@@ -54,6 +86,7 @@ const App = () => {
         </Routes>
         {/* Admin Protected Routes */}
       </Suspense>
+      <Toaster position="top-right" reverseOrder={false} />
     </BrowserRouter>
   );
 };

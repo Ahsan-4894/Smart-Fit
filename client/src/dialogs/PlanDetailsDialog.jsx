@@ -1,9 +1,7 @@
 const PlanDetailsDialog = ({ plan, onClose }) => {
   // Extended plan details (you can fetch these from backend or add to plansData)
   const planDetails = {
-    starter: {
-      difficulty: "Beginner",
-      duration: "15 minutes",
+    Intermediate: {
       description:
         "Perfect for those just starting their fitness journey. Get personalized guidance and build a foundation for success.",
       includes: [
@@ -18,12 +16,8 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
         "Busy professionals",
         "Quick consultations",
       ],
-      instructor: "Certified Fitness Coach",
-      availability: "Monday - Friday, 9 AM - 6 PM",
     },
-    pro: {
-      difficulty: "Intermediate",
-      duration: "45 minutes",
+    Beginner: {
       description:
         "Take your fitness to the next level with an in-depth coaching session tailored to your specific goals and needs.",
       includes: [
@@ -39,12 +33,8 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
         "Athletes in training",
         "Weight loss goals",
       ],
-      instructor: "Senior Fitness Specialist",
-      availability: "7 days a week, flexible hours",
     },
-    elite: {
-      difficulty: "Advanced",
-      duration: "90 minutes",
+    Advance: {
       description:
         "Our premium offering for serious athletes and fitness enthusiasts. Get comprehensive coaching with nutrition guidance included.",
       includes: [
@@ -61,12 +51,10 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
         "Body transformation goals",
         "Advanced fitness enthusiasts",
       ],
-      instructor: "Elite Performance Coach",
-      availability: "By appointment, premium scheduling",
     },
   };
-
-  const details = planDetails[plan?.id] || planDetails.starter;
+  console.log(plan);
+  const details = planDetails[plan?.difficulty];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -80,7 +68,7 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
                 {plan?.price}
               </span>
               <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
-                {details.difficulty}
+                {plan.difficulty}
               </span>
             </div>
           </div>
@@ -99,23 +87,19 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Overview
             </h3>
-            <p className="text-gray-600 leading-relaxed">
-              {details.description}
-            </p>
+            <p className="text-gray-600 leading-relaxed">{plan.description}</p>
           </div>
 
           {/* Quick Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-500 mb-1">Duration</div>
-              <div className="font-semibold text-gray-900">
-                {details.duration}
-              </div>
+              <div className="font-semibold text-gray-900">{plan.duration}</div>
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-500 mb-1">Difficulty Level</div>
               <div className="font-semibold text-gray-900">
-                {details.difficulty}
+                {plan.difficulty}
               </div>
             </div>
           </div>
@@ -155,15 +139,9 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
           {/* Additional Info */}
           <div className="border-t border-gray-200 pt-6 space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-600">Instructor</span>
-              <span className="font-medium text-gray-900">
-                {details.instructor}
-              </span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-gray-600">Availability</span>
               <span className="font-medium text-gray-900">
-                {details.availability}
+                {plan.availability}
               </span>
             </div>
           </div>
