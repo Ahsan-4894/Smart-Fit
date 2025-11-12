@@ -20,7 +20,7 @@ class UserController {
       });
     }
   };
-  
+
   static register = async (req, res, next) => {
     try {
       const userDetails = req.body;
@@ -44,6 +44,23 @@ class UserController {
       res.status(StatusCodes.OK).json({
         ok: true,
         message: "Logout Successful",
+      });
+    } catch (err) {
+      res.status(err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+        ok: false,
+        message: err.message || "Something went wrong",
+      });
+    }
+  };
+
+  static dashboard = async (req, res, next) => {
+    try {
+      const userId = req?.user?.id;
+      const dashboard = await UserService.dashboard(userId);
+      res.status(StatusCodes.OK).json({
+        ok: true,
+        message: "Dashboard Data Fetched Successfully",
+        dashboard,
       });
     } catch (err) {
       res.status(err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({

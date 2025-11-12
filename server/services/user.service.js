@@ -2,6 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import { GlobalErrorHandler } from "../utils/utility.js";
 import { generateToken } from "../utils/jwt.js";
 import { UserModel } from "../models/user.model.js";
+import { BookingModel } from "../models/booking.model.js";
+import mongoose from "mongoose";
 
 class UserService {
   static userLogin = async (userCredentials, res) => {
@@ -98,6 +100,100 @@ class UserService {
   static logoutUser = async (res) => {
     res.clearCookie("loggedUser");
     return;
+  };
+
+  static dashboard = async (userId) => {
+    try {
+      const enrolledPrograms = await BookingModel.aggregate([
+        {
+          $match: {
+            user: new mongoose.Types.ObjectId(userId),
+            status: "paid",
+          },
+        },
+        {
+          $lookup: {
+            from: "plans",
+            localField: "plan",
+            foreignField: "_id",
+            as: "planDetails",
+          },
+        },
+        {
+          $unwind: "$planDetails",
+        },
+      ]);
+
+      // Count of enrolled programs
+      const enrolledCount = enrolledPrograms.length;
+
+      // Calculate total hours trained
+      let totalMinutes = 0;
+      enrolledPrograms.forEach((booking) => {
+        const duration = booking.planDetails.duration.toLowerCase();
+        const match = duration.match(/(\d+\.?\d*)\s*(hour|hr|minute|min)/i);
+        if (match) {
+          const value = parseFloat(match[1]);
+          const unit = match[2];
+          if (unit.includes("hour") || unit.includes("hr")) {
+            totalMinutes += value * 60;
+          } else {
+            totalMinutes += value;
+          }
+        }
+      });
+      const totalHours = (totalMinutes / 60).toFixed(1);
+
+      // Next session timing (from most recent booking)
+      const nextSession =
+        enrolledPrograms.length > 0
+          ? enrolledPrograms[0].planDetails.availability
+          : "No upcoming sessions";
+
+      // All enrolled programs
+      const allEnrolledPrograms = enrolledPrograms.map((booking) => ({
+        id: booking._id,
+        planId: booking.planDetails._id,
+        title: booking.planDetails.title,
+        type: booking.planDetails.type,
+        imageUrl: booking.planDetails.image,
+        difficulty: booking.planDetails.difficulty,
+        duration: booking.planDetails.duration,
+        price: booking.planDetails.price,
+        features: booking.planDetails.features,
+        availability: booking.planDetails.availability,
+        bookingDate: booking.bookingDate,
+        amount: booking.amount,
+      }));
+
+      // Average duration
+      const avgDurationMinutes =
+        enrolledCount > 0 ? totalMinutes / enrolledCount : 0;
+      const avgDuration = `${Math.round(avgDurationMinutes)} min`;
+
+      // Goal progress [completed, left]
+      const completedPrograms = 0; // TODO: Add completion tracking
+      const leftPrograms = enrolledCount - completedPrograms;
+      const goalProgress = [completedPrograms, leftPrograms];
+
+      return {
+        enrolledCount,
+        totalHours,
+        nextSession,
+        allEnrolledPrograms,
+        totalProgramsCount: enrolledCount,
+        avgDuration,
+        goalProgress,
+      };
+    } catch (err) {
+      console.log(err);
+
+      if (err instanceof GlobalErrorHandler) throw err;
+      throw new GlobalErrorHandler(
+        "Internal Server Error",
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
   };
 }
 
