@@ -22,8 +22,12 @@ export const addPlan = async (formData) => {
 };
 
 export const updatePlan = async (formData) => {
-  const { data } = await axios.put(BASE_URL + "/editplan", formData, {
-    headers: { "Content-Type": "application/json" },
-  });
-  return data;
+  try {
+    const { data } = await axios.put(BASE_URL + "/editplan", formData, {
+      withCredentials: true,
+    });
+    return data;
+  } catch (err) {
+    throw err;
+  }
 };

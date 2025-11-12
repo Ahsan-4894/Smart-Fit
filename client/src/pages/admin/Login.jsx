@@ -3,8 +3,10 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { userExists } from "../../redux/reducers/auth";
 import { login } from "../../api/admin";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
@@ -13,21 +15,20 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     console.log("In Admin/Login.jsx, under handleLogin page");
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-    console.log(formData);
+    const payload = {
+      email,
+      password,
+    };
     try {
-      const data = await login(formData);
-      console.log(data);
+      const data = await login(payload);
       if (data?.ok) {
         dispatch(userExists(data?.user));
         toast.success(data?.message);
+        navigate("/admin/dashboard");
       } else {
         toast.error(data?.message);
       }
     } catch (err) {
-      console.log(err);
       toast.error(err?.response?.data?.message || "Oops! Something went wrong");
     }
   };

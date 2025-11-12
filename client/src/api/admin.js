@@ -2,28 +2,30 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_SERVER_URL + "/api/v1/admin";
 
-export const login = async (formData) => {
-  const { data } = await axios.post(BASE_URL + "/login", formData, {
-    withCredentials: true,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return data;
+export const login = async (payload) => {
+  try {
+    const { data } = await axios.post(BASE_URL + "/login", payload, {
+      withCredentials: true,
+    });
+    return data;
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const logout = async () => {
-  const { data } = await axios.post(
-    BASE_URL + "/logout",
-    {},
-    {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return data;
+  try {
+    const { data } = await axios.post(
+      BASE_URL + "/logout",
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    return data;
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const dashboard = async () => {
@@ -35,4 +37,3 @@ export const dashboard = async () => {
   });
   return data;
 };
-

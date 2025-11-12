@@ -13,7 +13,6 @@ const EditPlanDialog = ({ plan, onClose, onSuccess }) => {
     description: "",
     features: "",
     availability: "",
-    image: "",
   });
 
   useEffect(() => {
@@ -29,7 +28,6 @@ const EditPlanDialog = ({ plan, onClose, onSuccess }) => {
           ? plan.features.join(", ")
           : plan.features || "",
         availability: plan.availability || "",
-        image: plan.image || "",
       });
     }
   }, [plan]);
@@ -40,12 +38,14 @@ const EditPlanDialog = ({ plan, onClose, onSuccess }) => {
       !formData.type ||
       !formData.duration ||
       !formData.price ||
-      !formData.description
+      !formData.description ||
+      !formData.features ||
+      !formData.availability
     ) {
       toast.error("Please fill all required fields");
       return;
     }
-    formData.append("id", plan.id);
+    formData["id"] = plan.id;
     try {
       const response = await updatePlan(formData);
       if (response?.ok) {
@@ -213,22 +213,6 @@ const EditPlanDialog = ({ plan, onClose, onSuccess }) => {
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
               placeholder="e.g., Monday, Wednesday, Friday - 7:00 AM"
-            />
-          </div>
-
-          {/* Image URL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Image URL
-            </label>
-            <input
-              type="text"
-              value={formData.image}
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
-              placeholder="https://example.com/image.jpg"
             />
           </div>
 

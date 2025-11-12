@@ -8,9 +8,9 @@ import { dashboard } from "../../api/admin";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
-    totalUsers: 1248,
-    distinctUsers: 342,
-    totalRevenue: 4567,
+    totalUsers: 0,
+    distinctUsers: 0,
+    totalRevenue: 0,
     weeklySales: {},
     usersPerSessionType: {},
   });
@@ -108,8 +108,8 @@ const Dashboard = () => {
             </h3>
             <div style={{ height: "300px" }}>
               <WeeklySalesChart
-                labels={weeklySales?.days}
-                dataArr={weeklySales?.sales}
+                labels={stats?.weeklySales?.days}
+                dataArr={stats?.weeklySales?.sales}
               />
             </div>
           </div>
@@ -121,8 +121,8 @@ const Dashboard = () => {
             </h3>
             <div style={{ height: "300px" }}>
               <PopularSessionsChart
-                labels={usersPerSessionType.sessionTypes}
-                dataArr={usersPerSessionType.usersPerSessionType}
+                labels={stats?.usersPerSessionType.sessionTypes}
+                dataArr={stats?.usersPerSessionType.usersPerSessionType}
               />
             </div>
           </div>

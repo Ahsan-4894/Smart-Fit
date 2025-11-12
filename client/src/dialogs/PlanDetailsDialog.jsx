@@ -53,7 +53,6 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
       ],
     },
   };
-  console.log(plan);
   const details = planDetails[plan?.difficulty];
 
   return (
@@ -65,7 +64,7 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
             <h2 className="text-2xl font-bold text-gray-900">{plan?.title}</h2>
             <div className="flex items-center gap-3 mt-1">
               <span className="text-2xl font-bold text-orange-600">
-                {plan?.price}
+                ${plan?.price}
               </span>
               <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
                 {plan.difficulty}
