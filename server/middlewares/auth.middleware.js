@@ -51,7 +51,6 @@ const isLoggedInAsAdmin = async (req, res, next) => {
       return next(
         new GlobalErrorHandler("User not found", StatusCodes.UNAUTHORIZED)
       );
-
     // Check if user role is 'admin'
     if (user.role !== "ROLE_ADMIN")
       return next(

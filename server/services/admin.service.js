@@ -20,17 +20,19 @@ class AdminService {
       // Check if password is same or not.
       const isPasswordMatched = await user.comparePassword(password);
       if (!isPasswordMatched)
-        return new GlobalErrorHandler(
-          "Wrong creentials",
+        throw new GlobalErrorHandler(
+          "Wrong credentials",
           StatusCodes.NOT_FOUND
         );
       // Check if user's role is ROLE_ADMIN.
       if (user.role !== "ROLE_ADMIN")
-        return new GlobalErrorHandler("Access Denied", StatusCodes.FORBIDDEN);
+        throw new GlobalErrorHandler(
+          "Wrong credentials",
+          StatusCodes.FORBIDDEN
+        );
 
       //   Generate JWT Token for the user.
       const token = generateToken({ id: user._id, ttl: "2d" });
-
       //   Now save this token in browser's cookie.
       res.cookie("loggedUser", token, {
         httpOnly: true,

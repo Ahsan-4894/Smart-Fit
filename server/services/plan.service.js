@@ -46,15 +46,6 @@ class PlanService {
         availability,
       } = plan;
 
-      // Check wether two plans doesn't have same title.
-      const isPlanExists = await PlanModel.findOne({ title: title });
-      if (isPlanExists)
-        throw new GlobalErrorHandler(
-          "Plan already exists",
-          StatusCodes.CONFLICT
-        );
-      console.log(isPlanExists);
-
       if (!file)
         return next(
           new ErrorHandler("Please upload Plan Image", StatusCodes.BAD_REQUEST)
@@ -78,7 +69,6 @@ class PlanService {
 
       return newPlan;
     } catch (err) {
-      console.log(err);
       if (err instanceof GlobalErrorHandler) throw err;
       throw new GlobalErrorHandler(
         "Internal Server Error",
@@ -106,16 +96,6 @@ class PlanService {
       if (!isPlanExists)
         throw new GlobalErrorHandler("Plan not found", StatusCodes.NOT_FOUND);
 
-      // Check wether two plans doesn't have same title.
-      const isPlanExistsWithSameTitle = await PlanModel.findOne({
-        title: title,
-      });
-      if (isPlanExistsWithSameTitle)
-        throw new GlobalErrorHandler(
-          "Plan already exists",
-          StatusCodes.CONFLICT
-        );
-
       const updatedPlan = await PlanModel.findByIdAndUpdate(id, {
         title,
         type,
@@ -128,7 +108,6 @@ class PlanService {
       });
       return updatedPlan;
     } catch (err) {
-      console.log(err);
       if (err instanceof GlobalErrorHandler) throw err;
       throw new GlobalErrorHandler(
         "Internal Server Error",

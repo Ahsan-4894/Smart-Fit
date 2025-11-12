@@ -6,13 +6,13 @@ class AdminController {
     try {
       const adminCredentials = req.body;
       const admin = await AdminService.loginAdmin(adminCredentials, res);
-
       res.status(StatusCodes.OK).json({
         ok: true,
         message: "Admin Login Successful",
         user: admin,
       });
     } catch (err) {
+      console.log(err);
       res.status(err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
         ok: false,
         message: err.message || "Something went wrong",
@@ -22,6 +22,7 @@ class AdminController {
 
   static logoutAdmin = async (req, res, next) => {
     try {
+      console.log(req.user);
       await AdminService.logoutAdmin(res);
       res.status(StatusCodes.OK).json({
         ok: true,
