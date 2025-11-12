@@ -5,15 +5,14 @@ class UserController {
   static login = async (req, res, next) => {
     try {
       const userCredentials = req.body;
-
       const user = await UserService.userLogin(userCredentials, res);
-
       res.status(StatusCodes.OK).json({
         ok: true,
         message: "Login Successful",
         user,
       });
     } catch (err) {
+      console.log(err);
       res.status(err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
         ok: false,
         message: err.message || "Something went wrong",

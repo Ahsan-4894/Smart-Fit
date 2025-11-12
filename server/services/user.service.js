@@ -163,7 +163,8 @@ class UserService {
         features: booking.planDetails.features,
         availability: booking.planDetails.availability,
         bookingDate: booking.bookingDate,
-        amount: booking.amount,
+        progress: 0, // will figure this out later.
+        completedSessions: 0, // will figure this out later.
       }));
 
       // Average duration

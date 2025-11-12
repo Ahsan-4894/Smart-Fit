@@ -20,6 +20,6 @@ router.post(
 // Protected Routes
 router.use(isLoggedInAsUser);
 router.post("/logout", UserController.logout);
-router.get("/dashboard", UserController.dashboard)
+router.get("/dashboard", UserController.dashboard);
 
 export default router;

@@ -25,7 +25,6 @@ class ChatService {
         "Sorry, I couldn't understand that."
       );
     } catch (err) {
-      console.log(err);
       if (err instanceof GlobalErrorHandler) throw err;
       throw new GlobalErrorHandler(
         "Internal Server Error",
