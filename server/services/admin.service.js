@@ -36,7 +36,7 @@ class AdminService {
       //   Now save this token in browser's cookie.
       res.cookie("loggedUser", token, {
         httpOnly: true,
-        maxAge: 2 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 60 * 1000, // 30 minutes
         sameSite: "None", // allow cross-site cookie
         secure: true,
       });
@@ -56,7 +56,12 @@ class AdminService {
   };
 
   static logoutAdmin = async (res) => {
-    res.clearCookie("loggedUser");
+    res.clearCookie("loggedUser", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
     return;
   };
 

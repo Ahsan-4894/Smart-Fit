@@ -82,7 +82,7 @@ class UserService {
       const token = generateToken({ id: newUser._id, ttl: "2d" });
       res.cookie("loggedUser", token, {
         httpOnly: true,
-        maxAge: 2 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 60 * 1000, // 30 minutes
         sameSite: "None", // allow cross-site cookie
         secure: true,
       });
@@ -102,7 +102,12 @@ class UserService {
   };
 
   static logoutUser = async (res) => {
-    res.clearCookie("loggedUser");
+    res.clearCookie("loggedUser", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
     return;
   };
 
