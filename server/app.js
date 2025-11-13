@@ -18,6 +18,8 @@ import AUTH_ROUTE from "./routes/auth.route.js";
 import ADMIN_ROUTE from "./routes/admin.route.js";
 import PLAN_ROUTE from "./routes/plan.route.js";
 import CHAT_ROUTE from "./routes/chat.route.js";
+import STRIPE_ROUTE from "./routes/stripe.route.js";
+
 // All ENV Variables
 const SERVER_URL = process.env.SERVER_URL;
 const PORT = process.env.PORT;
@@ -30,6 +32,8 @@ const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
 // DB Connection
 connectDB(DATABASE_URI, DB_NAME);
+
+app.use("/api/v1/stripe/webhook", STRIPE_ROUTE);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -56,7 +60,7 @@ app.use("/api/v1/auth", AUTH_ROUTE);
 app.use("/api/v1/admin", ADMIN_ROUTE);
 app.use("/api/v1/plan", PLAN_ROUTE);
 app.use("/api/v1/chat", CHAT_ROUTE);
-
+app.use("/api/v1/stripe", STRIPE_ROUTE);
 app.get("/", (req, res) => {
   res.send("Hello from JavaScript!");
 });

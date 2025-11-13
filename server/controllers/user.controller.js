@@ -12,7 +12,6 @@ class UserController {
         user,
       });
     } catch (err) {
-      console.log(err);
       res.status(err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
         ok: false,
         message: err.message || "Something went wrong",

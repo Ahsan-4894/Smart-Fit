@@ -2,15 +2,23 @@ import { GlobalErrorHandler } from "../utils/utility.js";
 import { PlanModel } from "../models/plan.model.js";
 import { uploadFilesToCloudinary } from "../utils/features.js";
 import { StatusCodes } from "http-status-codes";
+import { BookingModel } from "../models/booking.model.js";
 
 class PlanService {
-  static getAllPlans = async () => {
+  static getAllPlans = async (userId) => {
     try {
       // Fetch all plans.
       const plans = await PlanModel.find();
       if (plans.length === 0)
         throw new GlobalErrorHandler("No plans found", StatusCodes.NOT_FOUND);
 
+      const allBookingsOfAUser = await BookingModel.find({
+        user: userId,
+      }).populate("plan", "_id");
+
+      const allAlreadyEnrolledPlanIds = allBookingsOfAUser.map((booking) =>
+        booking?.plan?._id.toString()
+      );
       const transformedPlans = plans.map((row) => ({
         id: row._id,
         imageUrl: row.image,
@@ -22,6 +30,7 @@ class PlanService {
         price: row.price,
         features: row.features,
         availability: row.availability,
+        alreadyEnrolled: allAlreadyEnrolledPlanIds.includes(row._id.toString()),
       }));
       return transformedPlans;
     } catch (err) {

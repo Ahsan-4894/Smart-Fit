@@ -187,8 +187,6 @@ class UserService {
         goalProgress,
       };
     } catch (err) {
-      console.log(err);
-
       if (err instanceof GlobalErrorHandler) throw err;
       throw new GlobalErrorHandler(
         "Internal Server Error",

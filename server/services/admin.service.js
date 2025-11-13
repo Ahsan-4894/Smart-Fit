@@ -66,8 +66,7 @@ class AdminService {
       // Active sessions.
       const distinctUsers = await BookingModel.distinct("user", {
         status: "paid",
-      }).count();
-
+      });
       // Total revenue.
       const totalRevenueAgg = await BookingModel.aggregate([
         {
@@ -79,14 +78,13 @@ class AdminService {
           $group: {
             _id: null,
             total: {
-              $sum: "$price",
+              $sum: "$amount",
             },
           },
         },
       ]);
       const totalRevenue =
         totalRevenueAgg.length > 0 ? totalRevenueAgg[0].total : 0;
-
       // Weekly sales.
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -102,7 +100,7 @@ class AdminService {
         {
           $group: {
             _id: { $dayOfWeek: "$createdAt" }, // 1 = Sunday, 7 = Saturday
-            total: { $sum: "$price" },
+            total: { $sum: "$amount" },
           },
         },
         { $sort: { _id: 1 } },
@@ -136,12 +134,10 @@ class AdminService {
       const usersPerSessionType = [];
       for (const type of allSessionTypes) {
         // Find all plan IDs under this session type
-        const plans = await PlanModel.find({ category: type }).select("_id");
-
+        const plans = await PlanModel.find({ type }).select("_id");
         const planIds = plans.map((p) => p._id);
-
         // Count distinct users who booked any of these plans
-        const users = await BookingModel.distinct("user", {
+        const users = await BookingModel.find({
           plan: { $in: planIds },
           status: "paid", // only count confirmed bookings
         });

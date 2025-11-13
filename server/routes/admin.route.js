@@ -14,5 +14,5 @@ router.post(
 
 router.use(isLoggedInAsAdmin);
 router.post("/logout", AdminController.logoutAdmin);
-router.post("/dashboard", AdminController.dashboard);
+router.get("/dashboard", AdminController.dashboard);
 export default router;

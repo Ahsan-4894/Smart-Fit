@@ -4,7 +4,8 @@ import PlanService from "../services/plan.service.js";
 class PlanController {
   static getAllPlans = async (req, res, next) => {
     try {
-      const plans = await PlanService.getAllPlans();
+      const userId = req?.user.id;
+      const plans = await PlanService.getAllPlans(userId);
       res.status(StatusCodes.OK).json({
         ok: true,
         message: "Plans fetched successfully",

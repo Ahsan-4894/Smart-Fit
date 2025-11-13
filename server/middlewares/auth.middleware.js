@@ -30,7 +30,6 @@ const isLoggedInAsUser = async (req, res, next) => {
     req.user = userObj;
     next();
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -59,10 +58,10 @@ const isLoggedInAsAdmin = async (req, res, next) => {
     const userObj = {
       id: user._id,
     };
+
     req.user = userObj;
     next();
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -90,7 +89,6 @@ const isLoggedIn = async (req, res, next) => {
     req.user = userObj;
     next();
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };

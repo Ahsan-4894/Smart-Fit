@@ -1,4 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
+import { GlobalErrorHandler } from "../utils/utility.js";
+import { StatusCodes } from "http-status-codes";
 
 export const getBase64 = (file) =>
   `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
@@ -29,6 +31,9 @@ export const uploadFilesToCloudinary = async (files = []) => {
 
     return formattedResults;
   } catch (error) {
-    console.log(error);
+    throw new GlobalErrorHandler(
+      "Error uploading files to Cloudinary",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
   }
 };

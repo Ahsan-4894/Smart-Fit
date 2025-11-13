@@ -1,16 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 const bookingSchema = new Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    plan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan", required: true },
-    amount: { type: Number, required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    plan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+    amount: { type: Number },
     status: {
       type: String,
       enum: ["pending", "paid", "failed"],
-      default: "pending",
     },
-    stripeSessionId: { type: String, required: true },
-    paymentIntentId: { type: String, required: true },
+    stripeSessionId: { type: String },
+    paymentIntentId: { type: String },
     bookingDate: { type: Date, default: Date.now },
   },
   { timestamps: true }
