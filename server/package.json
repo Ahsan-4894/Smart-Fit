@@ -4,7 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "start:prod": "node app.js"
   },
   "dependencies": {
     "argon2": "^0.44.0",
