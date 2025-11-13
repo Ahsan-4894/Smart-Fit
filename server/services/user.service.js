@@ -35,6 +35,8 @@ class UserService {
       res.cookie("loggedUser", token, {
         httpOnly: true,
         maxAge: 2 * 24 * 60 * 60 * 1000,
+        sameSite: "None", // allow cross-site cookie
+        secure: true,
       });
 
       return {
@@ -81,6 +83,8 @@ class UserService {
       res.cookie("loggedUser", token, {
         httpOnly: true,
         maxAge: 2 * 24 * 60 * 60 * 1000,
+        sameSite: "None", // allow cross-site cookie
+        secure: true,
       });
 
       return {
