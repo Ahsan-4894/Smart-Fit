@@ -59,7 +59,6 @@ const Chat = () => {
       };
 
       const data = await chat(payload);
-      console.log(data);
       if (data?.ok) {
         const botMsg = {
           id: Date.now() + 1,
@@ -75,7 +74,6 @@ const Chat = () => {
         toast.error(data?.message || "Failed to get reply");
       }
     } catch (err) {
-      console.error(err);
       toast.error("Server error — please try again later.");
     } finally {
       setIsTyping(false);

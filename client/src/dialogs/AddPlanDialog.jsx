@@ -55,9 +55,9 @@ const AddPlanDialog = ({ onClose, onSuccess }) => {
         return;
       }
 
-      // Validate file size (5MB max)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size should be less than 5MB");
+      // Validate file size (2MB max)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Image size should be less than 2MB");
         return;
       }
 
@@ -264,7 +264,7 @@ const AddPlanDialog = ({ onClose, onSuccess }) => {
                       or drag and drop
                     </p>
                     <p className="text-xs text-gray-500">
-                      PNG, JPG, JPEG or WebP (MAX. 5MB)
+                      PNG, JPG, JPEG or WebP (MAX. 2MB)
                     </p>
                   </div>
                 </label>

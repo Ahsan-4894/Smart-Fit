@@ -1,13 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoutesForAdmin = ({
-  children,
-  user,
-  redirect = "/admin/login",
-}) => {
-  if (user.role != "admin") return <Navigate to={redirect} />;
+const ProtectedRoutesForAdmin = ({ user, redirect = "/admin/login" }) => {
+  if (!user || user.role !== "ROLE_ADMIN")
+    return <Navigate to={redirect} replace />;
 
-  return children ? children : <Outlet />;
+  return <Outlet />;
 };
 
 export default ProtectedRoutesForAdmin;

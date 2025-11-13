@@ -21,7 +21,6 @@ const Sidebar = () => {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const handleLogout = async () => {
-    console.log("Under admin/Sidebar.jsx, under handleLogout page");
     try {
       const data = await logout();
       if (data?.ok) {
@@ -32,7 +31,6 @@ const Sidebar = () => {
         toast.error(data?.message);
       }
     } catch (err) {
-      console.log(err);
       toast.error(err?.response?.data?.message || "Oops! Something went wrong");
     }
   };

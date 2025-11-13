@@ -19,7 +19,6 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("In Signup.jsx, under handleSignup page");
     const payload = {
       name,
       email,
@@ -29,7 +28,6 @@ const Signup = () => {
       gender,
       age: parseInt(age),
     };
-    console.log(payload);
     try {
       const data = await register(payload);
       if (data?.ok) {
@@ -40,7 +38,6 @@ const Signup = () => {
         toast.error(data?.message);
       }
     } catch (err) {
-      console.log(err);
       toast.error(err?.response?.data?.message || "Oops! Something went wrong");
     }
   };

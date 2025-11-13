@@ -1,4 +1,10 @@
+import { useState } from "react";
+import PlanDetailsDialog from "../dialogs/PlanDetailsDialog";
 const EnrolledPrograms = ({ enrolledPrograms = [] }) => {
+  const [showPlanDetailsDialog, setShowPlanDetailsDialog] = useState(false);
+
+  const handlePlanDetailsDialog = () => setShowPlanDetailsDialog(true);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
@@ -11,15 +17,15 @@ const EnrolledPrograms = ({ enrolledPrograms = [] }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {enrolledPrograms.map((idx, program) => (
+        {enrolledPrograms.map((program, idx) => (
           <div
             key={idx}
             className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
           >
-            {/* imgUrl Header */}
+            {/* Image Header */}
             <div className="relative h-40">
               <img
-                src={program.imgUrl}
+                src={program.imageUrl}
                 alt={program.title}
                 className="w-full h-full object-cover"
               />
@@ -35,6 +41,7 @@ const EnrolledPrograms = ({ enrolledPrograms = [] }) => {
               <h3 className="text-lg font-bold text-gray-900 mb-1">
                 {program.title}
               </h3>
+              <p className="text-sm text-gray-500 mb-4">Type: {program.type}</p>
 
               {/* Progress Bar */}
               <div className="mb-4">
@@ -54,7 +61,7 @@ const EnrolledPrograms = ({ enrolledPrograms = [] }) => {
 
               {/* Next Session */}
               <div className="bg-orange-50 rounded-lg p-3 mb-4">
-                <div className="text-xs text-gray-500 mb-1">Next Session</div>
+                <div className="text-xs text-gray-500 mb-1">Availability</div>
                 <div className="text-sm font-semibold text-gray-900">
                   {program.availability}
                 </div>
@@ -62,18 +69,26 @@ const EnrolledPrograms = ({ enrolledPrograms = [] }) => {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                  Continue
-                </button>
-                <button className="px-4 py-2 border border-gray-200 hover:border-orange-600 text-gray-700 text-sm font-medium rounded-lg transition-colors">
+                <button
+                  onClick={handlePlanDetailsDialog}
+                  className="px-4 py-2 border border-gray-200 hover:border-orange-600 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+                >
                   Details
                 </button>
               </div>
             </div>
+
+            {showPlanDetailsDialog && (
+              <PlanDetailsDialog
+                plan={program}
+                onClose={() => setShowPlanDetailsDialog(false)}
+              />
+            )}
           </div>
         ))}
       </div>
     </div>
   );
 };
+
 export default EnrolledPrograms;

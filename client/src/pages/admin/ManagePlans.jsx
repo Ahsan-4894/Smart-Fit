@@ -23,7 +23,6 @@ const ManagePlans = () => {
         toast.error(data?.message);
       }
     } catch (error) {
-      console.error(error);
       toast.error(
         error?.response?.data?.message || "Oops! Something went wrong"
       );

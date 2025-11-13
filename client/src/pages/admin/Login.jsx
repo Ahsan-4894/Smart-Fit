@@ -14,7 +14,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("In Admin/Login.jsx, under handleLogin page");
     const payload = {
       email,
       password,

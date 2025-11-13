@@ -27,7 +27,6 @@ const Dashboard = () => {
           toast.error(data?.message);
         }
       } catch (err) {
-        console.log(err);
         toast.error(
           err?.response?.data?.message || "Oops! Something went wrong"
         );
@@ -69,7 +68,9 @@ const Dashboard = () => {
               </h2>
               <DonughtChart
                 labels={["Completed", "Left"]}
-                dataArr={[stats.goalProgress[0], stats.goalProgress[1]]}
+                dataArr={[stats?.goalProgress[0], stats.goalProgress[1]]}
+                totalWorkouts={stats?.totalHours}
+                avgDuration={stats?.avgDuration}
               />
             </div>
 

@@ -31,9 +31,6 @@ export const logout = async () => {
 export const dashboard = async () => {
   const { data } = await axios.get(BASE_URL + "/dashboard", {
     withCredentials: true,
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
   return data;
 };

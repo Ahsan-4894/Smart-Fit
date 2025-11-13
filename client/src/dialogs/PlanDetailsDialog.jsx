@@ -34,7 +34,7 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
         "Weight loss goals",
       ],
     },
-    Advance: {
+    Advanced: {
       description:
         "Our premium offering for serious athletes and fitness enthusiasts. Get comprehensive coaching with nutrition guidance included.",
       includes: [
@@ -54,7 +54,6 @@ const PlanDetailsDialog = ({ plan, onClose }) => {
     },
   };
   const details = planDetails[plan?.difficulty];
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">

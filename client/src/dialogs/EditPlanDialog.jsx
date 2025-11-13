@@ -56,7 +56,6 @@ const EditPlanDialog = ({ plan, onClose, onSuccess }) => {
         toast.error(response?.message || "Failed to update plan");
       }
     } catch (error) {
-      console.error("Error updating plan:", error);
       toast.error(error?.response?.data?.message || "Failed to update plan");
     }
   };

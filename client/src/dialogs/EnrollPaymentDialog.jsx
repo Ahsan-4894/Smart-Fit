@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { createCheckoutSession } from "../api/stripe";
+import { stripePromise } from "../config/stripe";
 
 const EnrollPaymentDialog = ({ plan, onClose, onSuccess }) => {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
@@ -20,15 +22,27 @@ const EnrollPaymentDialog = ({ plan, onClose, onSuccess }) => {
     return Object.keys(e).length === 0;
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!validate()) return;
-
     setLoading(true);
-    // Simulate payment processing
-    setTimeout(() => {
+    try {
+      // Create Stripe checkout session
+      const data = await createCheckoutSession(plan.id, form);
+      if (data?.ok) {
+        const { sessionId, sessionUrl } = data?.result;
+        // Get Stripe instance
+        const stripe = await stripePromise;
+
+        // Redirect to Stripe Checkout
+        window.location.href = sessionUrl;
+      } else {
+        toast.error(response?.message || "Payment failed. Please try again.");
+      }
+    } catch (error) {
+      alert(error.message || "Payment failed. Please try again.");
+    } finally {
       setLoading(false);
-      onSuccess && onSuccess();
-    }, 1500);
+    }
   };
 
   // Calculate tax and total (example)

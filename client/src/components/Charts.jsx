@@ -22,7 +22,12 @@ ChartJS.register(
   Legend
 );
 
-export const DonughtChart = ({ labels, dataArr }) => {
+export const DonughtChart = ({
+  labels,
+  dataArr,
+  totalWorkouts,
+  avgDuration,
+}) => {
   const doughnutData = {
     labels: labels, // ["Completed", "Left"],
     datasets: [
@@ -54,15 +59,19 @@ export const DonughtChart = ({ labels, dataArr }) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-3 bg-orange-50 rounded-lg">
               <div className="text-xs text-gray-500">Total Workouts</div>
-              <div className="text-xl font-semibold text-orange-600">18</div>
+              <div className="text-xl font-semibold text-orange-600">
+                {totalWorkouts}
+              </div>
             </div>
             <div className="p-3 bg-orange-50 rounded-lg">
               <div className="text-xs text-gray-500">Avg Duration</div>
-              <div className="text-xl font-semibold text-orange-600">42m</div>
+              <div className="text-xl font-semibold text-orange-600">
+                {avgDuration}
+              </div>
             </div>
             <div className="p-3 bg-orange-50 rounded-lg">
               <div className="text-xs text-gray-500">Calories/week</div>
-              <div className="text-xl font-semibold text-orange-600">2.1k</div>
+              <div className="text-xl font-semibold text-orange-600">0k</div>
             </div>
           </div>
         </div>

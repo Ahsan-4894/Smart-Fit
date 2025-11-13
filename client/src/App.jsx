@@ -1,24 +1,38 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, lazy } from "react";
 import { Toaster } from "react-hot-toast";
-// User related imports
-import Home from "./pages/user/Home";
-import Login from "./pages/user/Login";
-import Signup from "./pages/user/Signup";
-import LayoutLoader from "./components/LayoutLoader";
-import Dashboard from "./pages/user/Dashboard";
-import ProtectedRoutesForUser from "./components/auth/ProtectedRoutesForUser";
-import PublicRoutesForUser from "./components/auth/PublicRoutesForUser";
 
-import ProtectedRoutesForAdmin from "./components/auth/ProtectedRoutesForAdmin";
+// User related pages
+const Home = lazy(() => import("./pages/user/Home"));
+const Login = lazy(() => import("./pages/user/Login"));
+const Signup = lazy(() => import("./pages/user/Signup"));
+const Dashboard = lazy(() => import("./pages/user/Dashboard"));
+const Chat = lazy(() => import("./pages/user/Chat"));
+const BrowsePlans = lazy(() => import("./pages/user/BrowsePlans"));
+const PaymentSuccess = lazy(() => import("./pages/user/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("./pages/user/PaymentCancel"));
 
-import Chat from "./pages/user/Chat";
-import BrowsePlans from "./pages/user/BrowsePlans";
+// Auth route wrappers
+const ProtectedRoutesForUser = lazy(() =>
+  import("./components/auth/ProtectedRoutesForUser")
+);
+const PublicRoutesForUser = lazy(() =>
+  import("./components/auth/PublicRoutesForUser")
+);
+const ProtectedRoutesForAdmin = lazy(() =>
+  import("./components/auth/ProtectedRoutesForAdmin")
+);
+const PublicRoutesForAdmin = lazy(() =>
+  import("./components/auth/PublicRoutesForAdmin")
+);
 
-// Admin related imports
-import AdminLogin from "./pages/admin/Login";
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminManagePlans from "./pages/admin/ManagePlans";
+// Admin related pages
+const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminManagePlans = lazy(() => import("./pages/admin/ManagePlans"));
+
+// Common Components
+const LayoutLoader = lazy(() => import("./components/LayoutLoader"));
 
 import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
@@ -55,36 +69,36 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
-          {/* <Route element={<PublicRoutesForUser user={user} />}>
+          {/* Public routes - redirect to dashboard if already logged in */}
+          <Route element={<PublicRoutesForUser user={user} />}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-          </Route> */}
-
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
-          {/* <Route
-            element={
-              <ProtectedRoutesForUser user={user} redirect="/dashboard" />
-            }
-          > */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/plans" element={<BrowsePlans />} />
-          {/* </Route> */}
-
-          {/* Admin Protected Routes */}
-          {/* <Route element={<ProtectedRoutesForAdmin user={user} />}> */}
-          <Route path="/admin/">
-            <Route path="login" element={<AdminLogin />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route   path="manage-plans" element={<AdminManagePlans />} />
           </Route>
-          {/* </Route> */}
+
+          {/* Protected routes - require authentication */}
+          <Route
+            element={<ProtectedRoutesForUser user={user} redirect="/login" />}
+          >
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/plans" element={<BrowsePlans />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/cancel" element={<PaymentCancel />} />
+          </Route>
+
+          <Route element={<PublicRoutesForAdmin user={user} />}>
+            <Route path="/admin/login" element={<AdminLogin />} />
+          </Route>
+          {/* Admin Protected Routes */}
+          <Route element={<ProtectedRoutesForAdmin user={user} />}>
+            <Route path="/admin/">
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="manage-plans" element={<AdminManagePlans />} />
+            </Route>
+          </Route>
+          {/* Admin Protected Routes */}
         </Routes>
-        {/* Admin Protected Routes */}
       </Suspense>
       <Toaster position="top-right" reverseOrder={false} />
     </BrowserRouter>

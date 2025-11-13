@@ -1,8 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoutesForUser = ({ user }) => {
-  if (user && user.role === "user") {
-    return <Navigate to="/dashboard" />;
+  // If user is logged in, redirect to dashboard
+  if (user && user.role === "ROLE_USER") {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <Outlet />;

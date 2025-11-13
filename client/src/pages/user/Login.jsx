@@ -13,14 +13,12 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("In Login.jsx, under handleLogin page");
     const payload = {
       email,
       password,
     };
     try {
       const data = await login(payload);
-      console.log(data);
       if (data?.ok) {
         dispatch(userExists(data?.user));
         toast.success(data?.message);

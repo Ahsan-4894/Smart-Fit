@@ -24,7 +24,6 @@ const BrowsePlans = () => {
           toast.error(data?.message);
         }
       } catch (error) {
-        console.error("Error fetching plans:", error);
         toast.error(
           error?.response?.data?.message || "Oops! Something went wrong"
         );
@@ -141,10 +140,19 @@ const BrowsePlans = () => {
                       <div className="flex gap-3">
                         <button
                           onClick={() => openEnroll(plan)}
-                          className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95"
+                          disabled={plan?.alreadyEnrolled}
+                          className={`flex-1 px-4 py-2.5 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95
+    ${
+      plan?.alreadyEnrolled
+        ? "bg-gray-300 text-black cursor-not-allowed"
+        : "bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white"
+    }`}
                         >
-                          Enroll Now
+                          {plan?.alreadyEnrolled
+                            ? "You're enrolled"
+                            : "Enroll Now"}
                         </button>
+
                         <button
                           onClick={() => openDetails(plan)}
                           className="px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-orange-600 hover:text-orange-600 transition-colors"

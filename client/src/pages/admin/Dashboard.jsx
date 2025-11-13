@@ -25,14 +25,12 @@ const Dashboard = () => {
           toast.error(data?.message);
         }
       } catch (err) {
-        console.log(err);
         toast.error(
           err?.response?.data?.message || "Oops! Something went wrong"
         );
       }
     };
-
-    fetchStats;
+    fetchStats();
   }, []);
 
   const StatCard = ({ icon: Icon, title, value, subtitle, trend }) => (
@@ -80,14 +78,14 @@ const Dashboard = () => {
           <StatCard
             icon={Users}
             title="Total Users"
-            value={stats.totalUsers.toLocaleString()}
-            subtitle={`${stats.distinctUsers} active now`}
-            trend={12}
+            value={stats?.totalUsers.toLocaleString()}
+            subtitle={`${stats?.distinctUsers.length} active now`}
+            trend={stats?.distinctUsers.length}
           />
           <StatCard
             icon={Activity}
             title="Active Sessions"
-            value={stats.totalUsers}
+            value={stats?.totalUsers}
             subtitle="Users in live sessions"
             trend={8}
           />
